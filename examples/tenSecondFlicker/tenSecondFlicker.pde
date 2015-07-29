@@ -2,7 +2,7 @@
 #include <Flicker.h>
 
 int ledPin = 3;
-int duration = 1000;
+int duration = 10000;
 
 Flicker tenSecondFlicker(ledPin, 10, 40, duration);
 
