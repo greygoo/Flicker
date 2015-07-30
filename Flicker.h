@@ -10,7 +10,7 @@
 class Flicker
 {
   public:
-    Flicker(int pin, int min, int max, long on);
+    Flicker(int pin, int minF, int maxF, int minB, int maxB, long on);
     void Enable();
     void Update();
   private:
@@ -18,6 +18,8 @@ class Flicker
     int ledPin;
     int minFlick;
     int maxFlick;
+    int minBrightness;
+    int maxBrightness;
     long FlickTime;
     long OnTime;
     long prevMillis;

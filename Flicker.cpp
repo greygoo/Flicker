@@ -1,14 +1,16 @@
 #include "Arduino.h"
 #include "Flicker.h"
 
-Flicker::Flicker(int pin, int min, int max, long on)
+Flicker::Flicker(int pin, int minF, int maxF, int minB, int maxB, long on)
 {
       enabled = 0;
 
       ledPin = pin;
 
-      minFlick = min;
-      maxFlick = max;
+      minFlick = minF;
+      maxFlick = maxF;
+      minBrightness = minB;
+      maxBrightness = maxB;
       unsigned long currentMillis = millis();
       FlickTime = currentMillis + random(maxFlick - minFlick) + minFlick;
 
@@ -33,9 +35,9 @@ void Flicker::Update()
     prevMillis = currentMillis;
     digitalWrite(ledPin, LOW);
   }
-  else if ( enabled && (currentMillis - prevMillis <= FlickTime))
+  else if ( enabled && (currentMillis - prevMillis >= FlickTime))
   {
-    analogWrite(ledPin, random(120)+135);
+    analogWrite(ledPin, random(maxBrightness - minBrightness) + minBrightness);
     FlickTime = currentMillis + random(maxFlick - minFlick) + minFlick;
   }
 }
