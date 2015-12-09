@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include "Flicker.h"
+#include <Serial.h>
 
 Flicker::Flicker(int pin, int minF, int maxF, int minB, int maxB, long on)
 {
@@ -11,8 +12,8 @@ Flicker::Flicker(int pin, int minF, int maxF, int minB, int maxB, long on)
       maxFlick = maxF;
       minBrightness = minB;
       maxBrightness = maxB;
-      unsigned long currentMillis = millis();
-      FlickTime = currentMillis + random(maxFlick - minFlick) + minFlick;
+      currentMillis = millis();
+      Brightness = 250;
 
       OnTime = on;
 
@@ -23,21 +24,36 @@ Flicker::Flicker(int pin, int minF, int maxF, int minB, int maxB, long on)
 void Flicker::Enable()
 {
   enabled = 1;
+  pinMode(ledPin, OUTPUT);
+  prevMillis = millis();
+  FlickTime = random(maxFlick - minFlick) + minFlick;
 }
  
 void Flicker::Update()
 {
-  unsigned long currentMillis = millis();
+  currentMillis = millis();
+  passedMillis = currentMillis - prevMillis;
+  Serial.print(passedMillis);
+  Serial.print("\n");
 
-  if( enabled && (currentMillis - prevMillis >= OnTime))
-  {
-    enabled = 0;
-    prevMillis = currentMillis;
-    digitalWrite(ledPin, LOW);
-  }
-  else if ( enabled && (currentMillis - prevMillis >= FlickTime))
-  {
-    analogWrite(ledPin, random(maxBrightness - minBrightness) + minBrightness);
-    FlickTime = currentMillis + random(maxFlick - minFlick) + minFlick;
+  if(enabled) 
+  { 
+    analogWrite(ledPin, Brightness);
+    if (passedMillis >= OnTime)
+    // Flickering timeout met, switch off
+    {
+      Serial.print("\nOff\n");
+      enabled = 0;
+      prevMillis = 0;
+      digitalWrite(ledPin, LOW);
+    }
+    if (passedMillis >= FlickTime)
+    // Flick timeout met, change Flicktime and Brightness
+    {
+      Serial.print("\nFlick\n");
+      Serial.print(FlickTime);
+      Brightness = random(maxBrightness - minBrightness) + minBrightness;
+      FlickTime = passedMillis + random(maxFlick - minFlick) + minFlick;
+    }
   }
 }
