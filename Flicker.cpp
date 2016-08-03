@@ -1,6 +1,6 @@
 #include "Arduino.h"
 #include "Flicker.h"
-#include <Serial.h>
+#include <SoftwareSerial.h>
 
 Flicker::Flicker(int pin, int minF, int maxF, int minB, int maxB, long on)
 {
